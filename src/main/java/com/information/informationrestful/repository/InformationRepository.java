@@ -1,7 +1,15 @@
-package com.information.informationRestful.repository;
+package com.information.informationrestful.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import com.information.informationRestful.models.Information;
+import org.springframework.transaction.annotation.Transactional;
+import com.information.informationrestful.models.Informations;
 
-public interface InformationRepository extends JpaRepository<Information, Long> {
+import java.util.Optional;
+
+
+public interface InformationRepository extends JpaRepository<Informations, Long> {
+  Optional<Informations> findByTitle(String title);
+  
+  @Transactional
+  long deleteByTitle(String title);
 }

@@ -1,20 +1,21 @@
-package com.information.informationRestful.models;
+package com.information.informationrestful.models;
 
 import java.util.Objects;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
 @Entity
-public class Information {
-  private @Id @GeneratedValue Long id;
+public class Informations {
+  private @Id @GeneratedValue(strategy=GenerationType.IDENTITY) Long id;
   private String title;
   private String content;
 
-  Information() {}
+  public Informations() {}
 
-  Information(String title, String content) {
+  public Informations(String title, String content) {
     this.title = title;
     this.content = content;
   }
@@ -43,10 +44,10 @@ public class Information {
   public boolean equals(Object o) {
     if (this == o) 
       return true;
-    if (!(o instanceof Information)) 
+    if (!(o instanceof Informations)) 
       return false;
 
-    Information information = (Information) o;
+    Informations information = (Informations) o;
 
     return Objects.equals(this.id, information.id) 
       && Objects.equals(this.title, information.title) 
