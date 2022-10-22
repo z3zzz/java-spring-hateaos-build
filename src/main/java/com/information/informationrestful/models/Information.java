@@ -7,7 +7,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 
 @Entity
-class Information {
+public class Information {
   private @Id @GeneratedValue Long id;
   private String title;
   private String content;
@@ -41,7 +41,7 @@ class Information {
 
   @Override
   public boolean equals(Object o) {
-    if (this == 0) 
+    if (this == o) 
       return true;
     if (!(o instanceof Information)) 
       return false;

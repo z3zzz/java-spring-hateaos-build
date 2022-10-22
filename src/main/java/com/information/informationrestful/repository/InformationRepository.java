@@ -1,7 +1,7 @@
-package com.informationRestful.repository;
+package com.information.informationRestful.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import com.informationRestful.models.Information;
+import com.information.informationRestful.models.Information;
 
-interface InformationRepository extends JpaRepository<Information, Long> {
+public interface InformationRepository extends JpaRepository<Information, Long> {
 }
