@@ -14,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.CollectionModel;
+import org.springframework.hateoas.IanaLinkRelations;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
 
 import com.information.informationrestful.models.Informations;
@@ -52,8 +53,11 @@ public class InformationController {
   }
 
   @PostMapping("/informations")
-  Informations add(@RequestBody Informations information) {
-    return repository.save(information);
+  ResponseEntity<EntityModel<Informations>> add(@RequestBody Informations information) {
+    EntityModel<Informations> entityModel = assembler.toModel(repository.save(information));
+
+    return ResponseEntity.created(entityModel.getRequiredLink(IanaLinkRelations.SELF).toUri())
+            .body(entityModel);
   }
 
   @PutMapping("/informations/{title}")
