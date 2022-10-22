@@ -61,14 +61,16 @@ public class InformationController {
   }
 
   @PutMapping("/informations/{title}")
-  ResponseEntity<Informations> update(@PathVariable String title, @RequestBody Informations newInformation) {
+  ResponseEntity<EntityModel<Informations>> update(@PathVariable String title, @RequestBody Informations newInformation) {
       Informations informations = repository.findByTitle(title)
                                   .orElseThrow(() -> new InformationNotFoundException(title));
       
       informations.setContent(newInformation.getContent());
-      repository.save(informations);
 
-      return ResponseEntity.ok(informations);
+      EntityModel<Informations> entityModel = assembler.toModel(repository.save(informations));
+
+      return ResponseEntity.created(entityModel.getRequiredLink(IanaLinkRelations.SELF).toUri())
+              .body(entityModel);
   }
 
   @DeleteMapping("/informations/{title}")
