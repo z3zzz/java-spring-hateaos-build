@@ -1,6 +1,7 @@
 package com.information.informationrestful.controllers;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -12,9 +13,11 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.http.ResponseEntity;
 
 import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.CollectionModel;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
 
 import com.information.informationrestful.models.Informations;
+import com.information.informationrestful.models.InformationAssembler;
 import com.information.informationrestful.repository.InformationRepository;
 import com.information.informationrestful.exception.InformationNotFoundException;
 import com.information.informationrestful.utils.ContentResponse;
@@ -22,24 +25,29 @@ import com.information.informationrestful.utils.ContentResponse;
 @RestController
 public class InformationController {
   private final InformationRepository repository;
+  private final InformationAssembler assembler;
 
-  public InformationController(InformationRepository repository) {
+  public InformationController(InformationRepository repository, InformationAssembler assembler) {
     this.repository = repository;
+    this.assembler = assembler;
   }
 
   @GetMapping("/informations")
-  List<Informations> all() {
-    return repository.findAll();
+  public CollectionModel<EntityModel<Informations>> all() {
+    List<EntityModel<Informations>> informations = repository.findAll().stream()
+      .map(assembler::toModel)
+      .collect(Collectors.toList());
+
+    return CollectionModel.of(informations,
+        linkTo(methodOn(InformationController.class).all()).withSelfRel());
   }
 
   @GetMapping("/informations/{title}")
-  EntityModel<Informations> one(@PathVariable String title) {
+  public EntityModel<Informations> one(@PathVariable String title) {
     Informations information = repository.findByTitle(title)
       .orElseThrow(() -> new InformationNotFoundException(title));
 
-    return EntityModel.of(information, //
-          linkTo(methodOn(InformationController.class).one(title)).withSelfRel(),
-          linkTo(methodOn(InformationController.class).all()).withRel("informations"));
+    return assembler.toModel(information);
         
   }
 
