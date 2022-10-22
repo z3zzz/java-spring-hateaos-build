@@ -11,6 +11,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.http.ResponseEntity;
 
+import org.springframework.hateoas.EntityModel;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
+
 import com.information.informationrestful.models.Informations;
 import com.information.informationrestful.repository.InformationRepository;
 import com.information.informationrestful.exception.InformationNotFoundException;
@@ -30,9 +33,14 @@ public class InformationController {
   }
 
   @GetMapping("/informations/{title}")
-  Informations one(@PathVariable String title) {
-    return repository.findByTitle(title)
+  EntityModel<Informations> one(@PathVariable String title) {
+    Informations information = repository.findByTitle(title)
       .orElseThrow(() -> new InformationNotFoundException(title));
+
+    return EntityModel.of(information, //
+          linkTo(methodOn(InformationController.class).one(title)).withSelfRel(),
+          linkTo(methodOn(InformationController.class).all()).withRel("informations"));
+        
   }
 
   @PostMapping("/informations")
